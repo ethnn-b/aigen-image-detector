@@ -6,10 +6,11 @@ produces: not one accuracy number, but where the detector fails. Which real imag
 as fake, how far its score drops on a generator it never trained on, and how quickly it breaks once
 an image is compressed or resized.
 
-> Status: the linear probe runs end to end on CIFAKE. Data pipeline, model, training loop, the
-> failure report (FPR analysis, false-positive examples, degradation curve), Grad-CAM, single-image
-> inference, and the Gradio demo are all built; tests pass. The cross-generator table is wired and
-> waits only on GenImage being downloaded. See `STATUS.md` for the milestone-by-milestone state.
+> Status: 11 of 12 milestones. Probe and fine-tune run end to end on CIFAKE, with the full failure
+> report (FPR analysis, false-positive examples, degradation curve), Grad-CAM, single-image inference,
+> and the Gradio demo. The cross-generator drop, the project's headline, is measured on GenImage and
+> shows an asymmetric transfer gap (see below). Only the faces track is left, gated on dataset access.
+> 29 tests pass. See `STATUS.md` for the milestone-by-milestone state.
 
 ## The novel angle
 
@@ -66,7 +67,11 @@ uv run python -m aidetect.train --mode finetune
 # the failure report: accuracy, AUC, FPR at TPR=0.95, cross-generator table, degradation curve
 uv run python -m aidetect.evaluate --checkpoint checkpoints/best.pt
 
-# cross-generator table: drop GenImage under data/genimage/<gen>/{ai,nature}/ first, then
+# cross-generator drop: train on one GenImage generator, test on unseen ones (keyless download)
+uv run python scripts/cross_generator_experiment.py --train-gen midjourney
+uv run python scripts/cross_generator_experiment.py --train-gen biggan
+
+# or score an existing checkpoint on your own GenImage folders (data/genimage/<gen>/{ai,nature}/)
 uv run python -m aidetect.evaluate --checkpoint checkpoints/best_probe.pt --genimage-limit 2000
 
 # one image, with a Grad-CAM heatmap
@@ -137,8 +142,25 @@ resize x0.25 it lands at 0.810, no better than the probe's 0.816. The extra same
 buys little robustness once the image is degraded, which is the kind of result this project exists to
 surface rather than hide.
 
-Still to fill in: the cross-generator table, which needs GenImage on disk (the loader and the table
-code are ready, and `evaluate.py` prints the exact download instructions when GenImage is absent).
-The cross-generator drop is the headline this project exists to show, and CIFAKE's single generator
-cannot produce it. The expectation, worth stating before it is measured, is that the fine-tune's edge
-shrinks or reverses there, since fine-tuning tends to overfit the one generator it trained on.
+### Cross-generator generalization (GenImage)
+
+The honest headline. CIFAKE has one generator, so the cross-generator test uses GenImage: train a
+probe on one generator with a shared real set (`bitmind/bm-real`), then test on generators it never
+saw. The real distribution is identical across train and every test set, so the gap is generator
+shift, not domain shift. 250 real and 250 fake images per test set, pulled keyless from the Hugging
+Face hub (`scripts/cross_generator_experiment.py`). Reports:
+[reports/cross_generator_midjourney.md](reports/cross_generator_midjourney.md) and
+[reports/cross_generator_biggan.md](reports/cross_generator_biggan.md).
+
+| trained on | same-gen AUC | mean unseen AUC | change | worst unseen |
+| ---------- | ------------ | --------------- | ------ | ------------ |
+| MidJourney | 0.919        | 0.962           | -0.043 | glide 0.896  |
+| BigGAN     | 0.932        | 0.874           | +0.058 | midjourney 0.835 |
+
+The result is not the simple "always drops" story, and that is the point of measuring it. Transfer is
+asymmetric. Train on MidJourney, a strong modern generator with subtle artifacts, and the detector
+does fine on older generators (BigGAN 0.991, ADM 1.000) whose artifacts are blatant; the unseen
+generators are actually easier. Train on BigGAN and the gap is real and the wrong direction hurts: on
+unseen MidJourney the AUC falls to 0.835 and the operating point collapses, FPR at TPR=0.95 is 0.748,
+so catching 95 percent of MidJourney fakes would flag three of every four real photos. A detector is
+only as good as the hardest generator it was trained against, and a same-generator number hides that.
