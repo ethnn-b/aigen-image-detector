@@ -1,0 +1,41 @@
+[project]
+name = "aigen-image-detector"
+version = "0.1.0"
+description = "Detect AI-generated and manipulated images, with the headline being a false-positive and cross-generator failure report rather than a single accuracy number."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Ethan Kurien" }]
+
+dependencies = [
+    "torch",
+    "torchvision",
+    # Pretrained vision backbones (ViT, EfficientNet, etc.)
+    "timm",
+    "numpy",
+    "scikit-learn",
+    "pillow",
+]
+
+[project.optional-dependencies]
+# The Gradio demo is only needed to run the upload-an-image UI.
+demo = ["gradio"]
+# Hugging Face datasets, used by get_data.py to pull CIFAKE without a Kaggle key.
+data = ["datasets"]
+dev = ["pytest", "ruff"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/aidetect"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

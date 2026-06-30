@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Virtual environment
+.venv/
+
+# Secrets
+.env
+
+# Datasets and checkpoints (downloaded/built locally, never committed)
+data/
+checkpoints/
+runs/
+
+# OS / editor cruft
+.DS_Store
+.idea/
+.vscode/
