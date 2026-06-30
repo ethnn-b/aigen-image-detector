@@ -12,14 +12,18 @@ prints the links rather than pretending it can fetch them. No scraping anywhere.
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
 
 OTHER_DATASETS = """\
 Cross-generator and faces datasets (manual download or access request)
 
   GenImage (eight generators, for the cross-generator table)
     https://github.com/GenImage-Dataset/GenImage
-    Download the per-generator folders you want, drop them under data/genimage/<generator>/.
+    Drop each generator under data/genimage/<generator>/, with fake images in an
+    `ai/` folder and real images in a `nature/` folder. GenImage's own train/val
+    split inside (e.g. data/genimage/midjourney/val/ai, .../val/nature) is read as
+    is. Then run:
+      uv run python -m aidetect.evaluate --checkpoint checkpoints/best_probe.pt
+    and the cross-generator table fills in. Tune coverage with --genimage-limit.
 
   FaceForensics++ (deepfake faces, request access)
     https://github.com/ondyari/FaceForensics
@@ -31,10 +35,15 @@ Cross-generator and faces datasets (manual download or access request)
 """
 
 
-def download_cifake(data_root: str) -> None:
-    """Pull CIFAKE from the Hugging Face hub into data/cifake/."""
+def download_cifake(data_root: str, limit_per_split: int | None) -> None:
+    """Pull CIFAKE from the Hugging Face hub and export it to a real/fake image folder."""
     try:
-        from datasets import load_dataset
+        from aidetect.data import export_cifake
+    except ImportError:
+        print("could not import aidetect; run this through uv: uv run python scripts/get_data.py")
+        return
+    try:
+        import datasets  # noqa: F401
     except ImportError:
         print("the `datasets` package is not installed.")
         print("install it with:  uv sync --extra data")
@@ -42,22 +51,27 @@ def download_cifake(data_root: str) -> None:
         print("  https://www.kaggle.com/datasets/birdy654/cifake-real-and-ai-generated-synthetic-images")
         return
 
-    root = Path(data_root) / "cifake"
-    root.mkdir(parents=True, exist_ok=True)
-    print(f"downloading CIFAKE into {root} (real CIFAR-10 + Stable Diffusion fakes) ...")
-    # The hub mirror exposes train/test splits with an image and a binary label.
-    load_dataset("dragonintelligence/CIFAKE-image-dataset", cache_dir=str(root))
-    print("CIFAKE ready. label 1 = fake, 0 = real.")
+    note = "full set" if limit_per_split is None else f"{limit_per_split} per split"
+    print(f"downloading + exporting CIFAKE into {data_root}/cifake/images ({note}) ...")
+    images_root = export_cifake(data_root, limit_per_split=limit_per_split)
+    print(f"CIFAKE ready under {images_root}. label 1 = fake, 0 = real.")
+    print("train it:  uv run python -m aidetect.train --mode probe")
 
 
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="Fetch datasets")
     parser.add_argument("--data-root", default="data")
     parser.add_argument("--skip-cifake", action="store_true", help="only print the other links")
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        help="cap CIFAKE images per split (default: full 100k train / 20k test)",
+    )
     args = parser.parse_args(argv)
 
     if not args.skip_cifake:
-        download_cifake(args.data_root)
+        download_cifake(args.data_root, args.limit)
 
     print()
     print(OTHER_DATASETS)

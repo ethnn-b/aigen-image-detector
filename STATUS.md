@@ -45,8 +45,10 @@ best_finetune.pt is the stronger same-generator model. Point evaluate/infer at i
 
 ## Blockers
 None for the CIFAKE path. The two open milestones need external data:
-- Cross-generator table needs GenImage downloaded under data/genimage/. The loader and the table
-  code are built; evaluate.py prints the download link and skips cleanly when it is absent.
+- Cross-generator table needs GenImage downloaded under data/genimage/<gen>/{ai,nature}/. The loader
+  and table code are built, hardened (balanced per-generator subsample, --genimage-limit), and proven
+  end to end by a synthetic-fixture test, so it runs the moment real data lands. evaluate.py prints
+  the exact layout and skips cleanly when it is absent; get_data.py prints the same instructions.
 - Faces track needs FaceForensics++ access or the DFDC download. The pipeline is generator-agnostic,
   so it runs on those once the files are present.
 

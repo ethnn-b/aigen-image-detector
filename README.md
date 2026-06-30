@@ -66,6 +66,9 @@ uv run python -m aidetect.train --mode finetune
 # the failure report: accuracy, AUC, FPR at TPR=0.95, cross-generator table, degradation curve
 uv run python -m aidetect.evaluate --checkpoint checkpoints/best.pt
 
+# cross-generator table: drop GenImage under data/genimage/<gen>/{ai,nature}/ first, then
+uv run python -m aidetect.evaluate --checkpoint checkpoints/best_probe.pt --genimage-limit 2000
+
 # one image, with a Grad-CAM heatmap
 uv run python -m aidetect.infer --image path/to/img.jpg --heatmap
 

@@ -146,7 +146,7 @@ def _load_generator_folder(folder: Path, generator: str) -> list[ImageItem]:
 
 
 def cross_generator_table(
-    model, transform, device, batch_size, data_root, same_gen_auc: float, lines: list[str]
+    model, transform, device, batch_size, data_root, same_gen_auc: float, lines: list[str], limit: int = 2000
 ) -> None:
     start = len(lines)
     root = Path(data_root) / "genimage"
@@ -158,14 +158,16 @@ def cross_generator_table(
             "generator (Stable Diffusion), so the cross-generator drop, the honest headline of "
             "this project, needs GenImage's eight generators. Get it from "
             "https://github.com/GenImage-Dataset/GenImage and drop per-generator folders under "
-            "`data/genimage/<generator>/`, then re-run."
+            "`data/genimage/<generator>/`, each holding `ai/` (fake) and `nature/` (real) images "
+            "(GenImage's own train/val subfolders are fine), then re-run."
         )
         print("\n".join(lines[start:]))
         return
 
     lines.append(
         "AUC of the CIFAKE-trained detector on generators it never saw in training. The drop "
-        f"from the same-generator AUC ({same_gen_auc:.4f}) is the generalization gap.\n"
+        f"from the same-generator AUC ({same_gen_auc:.4f}) is the generalization gap. Up to "
+        f"{limit} balanced images per generator.\n"
     )
     lines.append("| test generator | images | ROC-AUC |")
     lines.append("| -------------- | ------ | ------- |")
@@ -174,6 +176,8 @@ def cross_generator_table(
         items = _load_generator_folder(d, d.name)
         if sum(it.label == 1 for it in items) == 0 or sum(it.label == 0 for it in items) == 0:
             continue
+        if limit and len(items) > limit:
+            items = _balanced_subset(items, limit, seed=0)
         s, y = predict_scores(model, items, transform, device, batch_size)
         auc = roc_auc(s, y)
         cross[d.name] = auc
@@ -187,7 +191,12 @@ def cross_generator_table(
     print("\n".join(lines[start:]))
 
 
-def evaluate(checkpoint: str, report_path: str = "reports/report.md", fp_examples: int = 12) -> None:
+def evaluate(
+    checkpoint: str,
+    report_path: str = "reports/report.md",
+    fp_examples: int = 12,
+    genimage_limit: int = 2000,
+) -> None:
     device = get_device()
     model, ckpt = load_model(checkpoint, device)
     cfg_image_size = ckpt["image_size"]
@@ -230,7 +239,7 @@ def evaluate(checkpoint: str, report_path: str = "reports/report.md", fp_example
     deg_subset = _balanced_subset(splits.test, 4000, seed=0)
     degradation_curve(model, deg_subset, transform, device, 64, lines)
 
-    cross_generator_table(model, transform, device, 64, "data", auc, lines)
+    cross_generator_table(model, transform, device, 64, "data", auc, lines, limit=genimage_limit)
 
     report.parent.mkdir(parents=True, exist_ok=True)
     report.write_text("\n".join(lines) + "\n")
@@ -242,8 +251,14 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--checkpoint", default="checkpoints/best.pt")
     parser.add_argument("--report", default="reports/report.md")
     parser.add_argument("--fp-examples", type=int, default=12)
+    parser.add_argument(
+        "--genimage-limit",
+        type=int,
+        default=2000,
+        help="max balanced images per generator in the cross-generator table (0 = all)",
+    )
     args = parser.parse_args(argv)
-    evaluate(args.checkpoint, args.report, args.fp_examples)
+    evaluate(args.checkpoint, args.report, args.fp_examples, args.genimage_limit)
 
 
 if __name__ == "__main__":
