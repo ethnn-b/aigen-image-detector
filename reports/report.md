@@ -1,6 +1,6 @@
 # Failure report
 
-Checkpoint `checkpoints/best.pt` (probe, backbone `vit_small_patch16_224`, val AUC 0.9767). Test set: 20000 CIFAKE images.
+Checkpoint `checkpoints/best_probe.pt` (probe, backbone `vit_small_patch16_224`, val AUC 0.9767). Test set: 20000 CIFAKE images.
 
 ## Headline
 
@@ -15,7 +15,7 @@ Read the last row as: to catch 95% of the fakes, the detector wrongly flags 11.6
 
 ## Worst false positives
 
-Real images scored at or above the operating threshold (0.4057), worst first. 1143 real images were flagged in all. Top 12 copied to `reports/false_positives` for inspection.
+Real images scored at or above the operating threshold (0.4057), worst first. 1143 real images were flagged in all. Top 12 copied to `reports/false_positives/probe` for inspection.
 
 | rank | score | source image |
 | ---- | ----- | ------------ |

@@ -103,30 +103,39 @@ All public, none scraped. The loaders read files the dataset hosts hand you.
 
 ## Results
 
-Linear probe on CIFAKE: a frozen `vit_small_patch16_224` backbone, a 2-logit head trained on cached
-features, scored on the full 20,000-image CIFAKE test split. Trained on a 20k subset of the train
-split (18k train, 2k val) on an Apple-Silicon MPS device. The full report is in
-[reports/report.md](reports/report.md).
+Both detectors use a `vit_small_patch16_224` backbone and are scored on the full 20,000-image CIFAKE
+test split. Trained on a 20k subset of the train split (18k train, 2k val) on an Apple-Silicon MPS
+device. The probe freezes the backbone and trains a 2-logit head on cached features; the fine-tune
+trains the whole model for 2 epochs at a 1e-5 learning rate. Full reports:
+[reports/report.md](reports/report.md) (probe) and
+[reports/report_finetune.md](reports/report_finetune.md) (fine-tune).
 
-| Setup                         | Accuracy | ROC-AUC | FPR @ TPR=0.95 |
-| ----------------------------- | -------- | ------- | -------------- |
-| Linear probe (CIFAKE)         | 0.920    | 0.977   | 0.116          |
+| Setup                   | Accuracy | ROC-AUC | FPR @ TPR=0.95 |
+| ----------------------- | -------- | ------- | -------------- |
+| Linear probe (CIFAKE)   | 0.920    | 0.977   | 0.116          |
+| Full fine-tune (CIFAKE) | 0.961    | 0.993   | 0.031          |
 
 Read the FPR column as the honest operating-point cost: to catch 95 percent of the AI images, the
-probe wrongly flags 11.6 percent of real photos as fake (1,143 of 10,000 real test images). The 12
-real images it was most sure were fake are copied to `reports/false_positives/`.
+probe wrongly flags 11.6 percent of real photos as fake (1,143 of 10,000), the fine-tune only 3.1
+percent (271 of 10,000). The 12 real images each was most sure were fake are copied to
+`reports/false_positives/probe/` and `reports/false_positives/finetune/`.
 
 Degradation under JPEG compression and resizing, on a 4,000-image balanced sample of the test set:
 
-| condition | clean | jpeg q=50 | jpeg q=10 | resize x0.5 | resize x0.25 |
-| --------- | ----- | --------- | --------- | ----------- | ------------ |
-| ROC-AUC   | 0.975 | 0.962     | 0.853     | 0.924       | 0.816        |
+| condition       | clean | jpeg q=50 | jpeg q=10 | resize x0.5 | resize x0.25 |
+| --------------- | ----- | --------- | --------- | ----------- | ------------ |
+| probe ROC-AUC   | 0.975 | 0.962     | 0.853     | 0.924       | 0.816        |
+| finetune ROC-AUC| 0.994 | 0.986     | 0.893     | 0.924       | 0.810        |
 
 The AUC holds through light compression and falls off under heavy JPEG and aggressive downscaling,
 which is the expected shape: a chunk of the generator fingerprint lives in the high frequencies that
-those operations throw away.
+those operations throw away. Note the last column: the fine-tune is far ahead on clean images, but at
+resize x0.25 it lands at 0.810, no better than the probe's 0.816. The extra same-generator accuracy
+buys little robustness once the image is degraded, which is the kind of result this project exists to
+surface rather than hide.
 
-Still to fill in: the full fine-tune row (the code path is built; run it on a GPU), and the
-cross-generator table, which needs GenImage on disk (the loader and the table code are ready, and
-`evaluate.py` prints the exact download instructions when GenImage is absent). The cross-generator
-drop is the headline this project exists to show, and CIFAKE's single generator cannot produce it.
+Still to fill in: the cross-generator table, which needs GenImage on disk (the loader and the table
+code are ready, and `evaluate.py` prints the exact download instructions when GenImage is absent).
+The cross-generator drop is the headline this project exists to show, and CIFAKE's single generator
+cannot produce it. The expectation, worth stating before it is measured, is that the fine-tune's edge
+shrinks or reverses there, since fine-tuning tends to overfit the one generator it trained on.

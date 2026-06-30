@@ -224,9 +224,8 @@ def evaluate(checkpoint: str, report_path: str = "reports/report.md", fp_example
     print("\n".join(lines))
 
     report = Path(report_path)
-    false_positive_report(
-        scores, labels, splits.test, threshold, fp_examples, report.parent / "false_positives", lines
-    )
+    fp_dir = report.parent / "false_positives" / ckpt["mode"]
+    false_positive_report(scores, labels, splits.test, threshold, fp_examples, fp_dir, lines)
 
     deg_subset = _balanced_subset(splits.test, 4000, seed=0)
     degradation_curve(model, deg_subset, transform, device, 64, lines)
