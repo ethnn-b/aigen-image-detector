@@ -50,6 +50,24 @@ Data feeds training, training produces a checkpoint, and that one checkpoint ser
 report and single-image inference. Source: [docs/diagrams/pipeline.excalidraw](docs/diagrams/pipeline.excalidraw),
 editable at [excalidraw.com](https://excalidraw.com).
 
+## Demo
+
+The Gradio demo (`uv run python -m aidetect.app`) takes an uploaded image and returns the probability
+it is AI-generated, the real-or-fake call at the report's operating threshold, and a Grad-CAM heatmap
+of where the model looked.
+
+![A real photo scored real with 98 percent confidence](docs/screenshots/demo-real-photo.png)
+
+A real photograph is scored real with 98 percent confidence, and the Grad-CAM overlay shows the model
+spreading its attention across the whole frame rather than fixating on one artifact.
+
+![A fake-leaning score held to a real call by the operating threshold](docs/screenshots/demo-operating-threshold.png)
+
+The operating threshold at work: this image's raw score leans fake (61 percent), but because that sits
+below the checkpoint's 0.688 threshold — the same one the failure report uses — the call is still
+`real`. The demo and the report agree on what counts as fake, so the confidence bar and the call can
+legitimately disagree near the boundary.
+
 ## Setup
 
 Uses [uv](https://docs.astral.sh/uv/) and Python 3.13.
@@ -100,6 +118,7 @@ aigen-image-detector/
     design-decisions.md why CIFAKE, why FPR-at-TPR, why cross-generator is the real test
     ethics-faces.md     the false-accusation cost and misuse note for the faces track
     diagrams/           architecture diagrams (.excalidraw source + .svg render)
+    screenshots/        demo UI screenshots used in this README
   src/aidetect/         the package (config, data, model, metrics, train, evaluate, explain, infer, app)
   tests/                unit tests for the metric and split logic
   scripts/              data fetch helper

@@ -21,3 +21,6 @@ runs/
 .DS_Store
 .idea/
 .vscode/
+
+# Local test images (copied from the gitignored data/, not for the repo)
+samples/
