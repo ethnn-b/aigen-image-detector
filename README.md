@@ -10,7 +10,7 @@ an image is compressed or resized.
 > report (FPR analysis, false-positive examples, degradation curve), Grad-CAM, single-image inference,
 > and the Gradio demo. The cross-generator drop, the project's headline, is measured on GenImage and
 > shows an asymmetric transfer gap (see below). Only the faces track is left, gated on dataset access.
-> 29 tests pass. See `STATUS.md` for the milestone-by-milestone state.
+> 29 tests pass.
 
 ## The novel angle
 
