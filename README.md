@@ -42,6 +42,14 @@ a wrong call costs a person.
 - Grad-CAM heatmaps so a flagged image shows where the model looked.
 - A Gradio demo: upload an image, get real-or-fake with a confidence and a heatmap.
 
+## Architecture
+
+![Pipeline architecture](docs/diagrams/pipeline.svg)
+
+Data feeds training, training produces a checkpoint, and that one checkpoint serves both the failure
+report and single-image inference. Source: [docs/diagrams/pipeline.excalidraw](docs/diagrams/pipeline.excalidraw),
+editable at [excalidraw.com](https://excalidraw.com).
+
 ## Setup
 
 Uses [uv](https://docs.astral.sh/uv/) and Python 3.13.
@@ -91,6 +99,7 @@ aigen-image-detector/
     concepts.md         how AI-image detection works and how to evaluate it honestly
     design-decisions.md why CIFAKE, why FPR-at-TPR, why cross-generator is the real test
     ethics-faces.md     the false-accusation cost and misuse note for the faces track
+    diagrams/           architecture diagrams (.excalidraw source + .svg render)
   src/aidetect/         the package (config, data, model, metrics, train, evaluate, explain, infer, app)
   tests/                unit tests for the metric and split logic
   scripts/              data fetch helper
@@ -151,6 +160,10 @@ shift, not domain shift. 250 real and 250 fake images per test set, pulled keyle
 Face hub (`scripts/cross_generator_experiment.py`). Reports:
 [reports/cross_generator_midjourney.md](reports/cross_generator_midjourney.md) and
 [reports/cross_generator_biggan.md](reports/cross_generator_biggan.md).
+
+![Cross-generator experiment setup](docs/diagrams/cross-generator.svg)
+
+Source: [docs/diagrams/cross-generator.excalidraw](docs/diagrams/cross-generator.excalidraw).
 
 | trained on | same-gen AUC | mean unseen AUC | change | worst unseen |
 | ---------- | ------------ | --------------- | ------ | ------------ |

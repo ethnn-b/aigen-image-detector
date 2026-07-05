@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-24.0 -24.0 2442.7 312.8" width="2443" height="313" font-family="'Comic Sans MS', 'Comic Sans', cursive">
+<rect x="-24.0" y="-24.0" width="2442.7" height="312.8" fill="#ffffff"/>
+<defs><marker id="arrowhead" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><polygon points="0 0, 10 4, 0 8" fill="#1e1e1e"/></marker></defs>
+<polyline points="238.1,32.8 536.7,32.8 536.7,132.4 835.4,132.4" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#arrowhead)"/>
+<polyline points="300.8,132.4 909.6,132.4 909.6,82.6 1518.4,82.6" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#arrowhead)"/>
+<polyline points="247.0,232.0 318.9,232.0 318.9,132.4 390.8,132.4" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#arrowhead)"/>
+<polyline points="745.4,132.4 835.4,132.4" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#arrowhead)"/>
+<polyline points="1136.2,132.4 1226.2,132.4" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#arrowhead)"/>
+<polyline points="1428.4,132.4 1473.4,132.4 1473.4,82.6 1518.4,82.6" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#arrowhead)"/>
+<polyline points="1428.4,132.4 1473.4,132.4 1473.4,203.0 1518.4,203.0" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#arrowhead)"/>
+<polyline points="1855.0,82.6 1945.0,82.6" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#arrowhead)"/>
+<polyline points="1738.6,203.0 1841.8,203.0 1841.8,182.2 1945.0,182.2" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#arrowhead)"/>
+<polyline points="2120.4,182.2 2192.3,182.2 2192.3,132.4 2264.2,132.4" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#arrowhead)"/>
+<polyline points="1738.6,203.0 2001.4,203.0 2001.4,132.4 2264.2,132.4" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#arrowhead)"/>
+<rect x="0.0" y="0.0" width="238.1" height="65.6" rx="8" ry="8" fill="#eef3ff" stroke="#4a5fc1" stroke-width="2"/>
+<text text-anchor="middle" font-size="16" fill="#1e1e1e"><tspan x="119.0" y="27.2" font-weight="700">data.py</tspan><tspan x="119.0" y="48.0">CIFAKE real/fake images</tspan></text>
+<rect x="0.0" y="99.6" width="300.8" height="65.6" rx="8" ry="8" fill="#eef3ff" stroke="#4a5fc1" stroke-width="2"/>
+<text text-anchor="middle" font-size="16" fill="#1e1e1e"><tspan x="150.4" y="126.8" font-weight="700">data.py</tspan><tspan x="150.4" y="147.6">GenImage per-generator folders</tspan></text>
+<rect x="0.0" y="199.2" width="247.0" height="65.6" rx="8" ry="8" fill="#eef3ff" stroke="#4a5fc1" stroke-width="2"/>
+<text text-anchor="middle" font-size="16" fill="#1e1e1e"><tspan x="123.5" y="226.4" font-weight="700">model.py</tspan><tspan x="123.5" y="247.2">timm backbone (ViT-S/16)</tspan></text>
+<rect x="390.8" y="89.2" width="354.6" height="86.4" rx="8" ry="8" fill="#eef3ff" stroke="#4a5fc1" stroke-width="2"/>
+<text text-anchor="middle" font-size="16" fill="#1e1e1e"><tspan x="568.1" y="116.4" font-weight="700">model.py</tspan><tspan x="568.1" y="137.2">2-class head</tspan><tspan x="568.1" y="158.0">frozen (probe) / unfrozen (finetune)</tspan></text>
+<rect x="835.4" y="89.2" width="300.8" height="86.4" rx="8" ry="8" fill="#eef3ff" stroke="#4a5fc1" stroke-width="2"/>
+<text text-anchor="middle" font-size="16" fill="#1e1e1e"><tspan x="985.8" y="116.4" font-weight="700">train.py</tspan><tspan x="985.8" y="137.2">AdamW + warmup</tspan><tspan x="985.8" y="158.0">best checkpoint by val ROC-AUC</tspan></text>
+<rect x="1226.2" y="110.0" width="202.2" height="44.8" rx="8" ry="8" fill="#eef3ff" stroke="#4a5fc1" stroke-width="2"/>
+<text text-anchor="middle" font-size="16" fill="#1e1e1e"><tspan x="1327.3" y="137.2" font-weight="700">checkpoints/best.pt</tspan></text>
+<rect x="1518.4" y="29.0" width="336.6" height="107.2" rx="8" ry="8" fill="#eef3ff" stroke="#4a5fc1" stroke-width="2"/>
+<text text-anchor="middle" font-size="16" fill="#1e1e1e"><tspan x="1686.7" y="56.2" font-weight="700">evaluate.py</tspan><tspan x="1686.7" y="77.0">failure report: AUC, FPR@TPR=0.95,</tspan><tspan x="1686.7" y="97.8">worst FPs, degradation curve,</tspan><tspan x="1686.7" y="118.6">cross-generator table</tspan></text>
+<rect x="1518.4" y="170.2" width="220.2" height="65.6" rx="8" ry="8" fill="#eef3ff" stroke="#4a5fc1" stroke-width="2"/>
+<text text-anchor="middle" font-size="16" fill="#1e1e1e"><tspan x="1628.5" y="197.4" font-weight="700">infer.py</tspan><tspan x="1628.5" y="218.2">single image -&gt; score</tspan></text>
+<rect x="1945.0" y="49.8" width="229.1" height="65.6" rx="8" ry="8" fill="#eef3ff" stroke="#4a5fc1" stroke-width="2"/>
+<text text-anchor="middle" font-size="16" fill="#1e1e1e"><tspan x="2059.6" y="77.0" font-weight="700">metrics.py</tspan><tspan x="2059.6" y="97.8">pure scoring, no torch</tspan></text>
+<rect x="1945.0" y="149.4" width="175.4" height="65.6" rx="8" ry="8" fill="#eef3ff" stroke="#4a5fc1" stroke-width="2"/>
+<text text-anchor="middle" font-size="16" fill="#1e1e1e"><tspan x="2032.7" y="176.6" font-weight="700">explain.py</tspan><tspan x="2032.7" y="197.4">Grad-CAM heatmap</tspan></text>
+<rect x="2264.2" y="99.6" width="130.6" height="65.6" rx="8" ry="8" fill="#eef3ff" stroke="#4a5fc1" stroke-width="2"/>
+<text text-anchor="middle" font-size="16" fill="#1e1e1e"><tspan x="2329.4" y="126.8" font-weight="700">app.py</tspan><tspan x="2329.4" y="147.6">Gradio demo</tspan></text>
+</svg>
