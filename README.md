@@ -6,12 +6,6 @@ produces: not one accuracy number, but where the detector fails. Which real imag
 as fake, how far its score drops on a generator it never trained on, and how quickly it breaks once
 an image is compressed or resized.
 
-> Status: 11 of 12 milestones. Probe and fine-tune run end to end on CIFAKE, with the full failure
-> report (FPR analysis, false-positive examples, degradation curve), Grad-CAM, single-image inference,
-> and the Gradio demo. The cross-generator drop, the project's headline, is measured on GenImage and
-> shows an asymmetric transfer gap (see below). Only the faces track is left, gated on dataset access.
-> 29 tests pass.
-
 ## The novel angle
 
 Most AI-image detectors on student portfolios stop at "99 percent accuracy on the test set". That
