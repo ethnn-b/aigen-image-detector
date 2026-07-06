@@ -60,7 +60,7 @@ uv run python -m aidetect.infer --image path/to/img.jpg --heatmap
 
 "99% on the test set" is close to meaningless when the test images come from the same generator as
 training. So beyond headline accuracy I measured the three things that decide whether a detector is
-usable in the wild.
+usable in the wild. Full breakdown with every table: [docs/expts.md](docs/expts.md).
 
 **Accuracy and the false-positive cost** — full CIFAKE test set (`vit_small_patch16_224`):
 
